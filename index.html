@@ -1,49 +1,113 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0">
-
-  <title>ระบบแจ้งการลา</title>
-
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>แบบฟอร์มแจ้งลา</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      background-color: #f2ebd7;
-      overflow: hidden;
-    }
-
-    .app-frame {
-      display: block;
-      width: 100%;
-      height: 100vh;
-      border: none;
-      background-color: #f2ebd7;
-    }
+    @import url('https://fonts.googleapis.com/css2?family=Prompt&display=swap');
+    * { font-family: 'Prompt', sans-serif; font-size: 15px; }
+    html, body { margin: 0; min-height: 100%; background-color: #f2ebd7; }
+    body { min-height: 100vh; background-color: #f2ebd7; }
+    h4 { text-align: center; }
+    form { width: auto; margin: auto; padding: 20px; color: black; background: white; }
+    div { margin-bottom: 15px; }
+    input[type="submit"] { display: block; min-width: 300px; margin: 20px auto 0; }
+    input[type="radio"] ~ label { text-align: left; }
+    img { display: block; max-width: 40%; height: auto; margin-right: auto; margin-left: auto; }
+    label { display: inline-block; }
   </style>
 </head>
 
 <body>
+  <div class="container mt-4">
+    <div class="row justify-content-center align-items-center">
+      <div class="col-sm-8 col-md-6 col-lg-6 bg-white rounded shadow">
+        <form id="myForm" onsubmit="submitForm(event, this)">
+          <div>
+            <img src="https://pws.npru.ac.th/udsanee/data/images/LogoSE-Corrected.png" alt="Software Engineering NPRU" width="250">
+          </div>
 
-  <iframe
-    class="app-frame"
-    src="https://script.google.com/macros/s/AKfycbzgGM-49xjvLoiXt3rcONTuELtV8OCuWL6g7gz3ps_yXat9sSSKPScso89QaUtEe4hB0Q/exec"
-    title="ระบบแจ้งการลา"
-    allowfullscreen>
-  </iframe>
+          <div class="text-center mt-3 mb-2">
+            <h4>ระบบแจ้งการลา</h4>
+          </div>
 
+          <div class="form-row mt-4">
+            <label>คำนำหน้าชื่อ* :</label>
+            <input type="radio" id="mr" value="นาย" name="title" required> <label for="mr">นาย</label>
+            <input type="radio" id="ms" value="นางสาว" name="title" required> <label for="ms">นางสาว</label>
+            <input type="radio" id="mrs" value="นาง" name="title" required> <label for="mrs">นาง</label>
+          </div>
+
+          <div class="form-row">
+            <label for="fname">ชื่อจริง* :</label>
+            <input type="text" id="fname" name="fname" required>
+          </div>
+
+          <div class="form-row">
+            <label for="lname">นามสกุล* :</label>
+            <input type="text" id="lname" name="lname" required>
+          </div>
+
+          <div class="form-row">
+            <label for="cd">ขอลาหยุดถึงวันที่* :</label>
+            <input type="date" id="cd" name="cd" required>
+          </div>
+
+          <div class="form-row">
+            <label for="myFile" style="width: fit-content;">
+              <i class="fa-solid fa-file-arrow-up"></i>
+              อัปโหลดหลักฐาน (ภาพ ATK, ใบรับรองแพทย์หรืออื่น ๆ)*
+            </label>
+            <input type="file" id="myFile" name="myFile" required>
+          </div>
+
+          <div class="form-row">
+            <label for="wishMessage" style="width: fit-content;">รายละเอียดอื่นที่ต้องการแจ้ง (ถ้ามี) :</label>
+            <textarea class="form-control" id="wishMessage" name="wishMessage" rows="3"></textarea>
+          </div>
+
+          <div class="form-row">
+            <input type="submit" class="btn btn-primary" id="sb" value="Submit">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    function submitForm(event, obj) {
+      event.preventDefault();
+      document.getElementById('sb').disabled = true;
+
+      google.script.run
+        .withSuccessHandler(function (output) {
+          console.log('บันทึกเรียบร้อย', output);
+          Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'แจ้งข้อมูลสำเร็จ',
+            showConfirmButton: false,
+            timer: 1500
+          });
+          document.getElementById('myForm').reset();
+          document.getElementById('sb').disabled = false;
+        })
+        .withFailureHandler(function (error) {
+          Swal.fire({
+            position: 'center',
+            icon: 'error',
+            title: 'บันทึกข้อมูลไม่สำเร็จ',
+            text: error.message || 'กรุณาลองใหม่อีกครั้ง'
+          });
+          document.getElementById('sb').disabled = false;
+        })
+        .saveData(obj);
+    }
+  </script>
 </body>
-
 </html>
